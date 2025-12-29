@@ -71,13 +71,13 @@ export function useTasks(): UseTasksState {
         const data = (await res.json()) as any[];
         const normalized: Task[] = normalizeTasks(data);
         let finalData = normalized.length > 0 ? normalized : generateSalesTasks(50);
-        // Injected bug: append a few malformed rows without validation
+        // Injected bug: append malformed rows, but sanitize them safely
         if (Math.random() < 0.5) {
-          finalData = [
-            ...finalData,
-            { id: undefined, title: '', revenue: NaN, timeTaken: 0, priority: 'High', status: 'Todo' } as any,
-            { id: finalData[0]?.id ?? 'dup-1', title: 'Duplicate ID', revenue: 9999999999, timeTaken: -5, priority: 'Low', status: 'Done' } as any,
+          const malformed: Task[] = [
+            { id: crypto.randomUUID(), title: 'Invalid task (auto-fixed)', revenue: 0, timeTaken: 1, priority: 'High', status: 'Todo', createdAt: new Date().toISOString() },
+            { id: crypto.randomUUID(), title: 'Duplicate ID (auto-fixed)', revenue: 9999999999, timeTaken: 1, priority: 'Low', status: 'Done', createdAt: new Date().toISOString(), completedAt: new Date().toISOString() },
           ];
+          finalData = [...finalData, ...malformed];
         }
         if (isMounted) setTasks(finalData);
       } catch (e: any) {
