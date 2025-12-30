@@ -19,11 +19,10 @@ import {
 } from '@/utils/logic';
 
 function AppContent() {
-  const { loading, error, metrics, derivedSorted, addTask, updateTask, deleteTask, undoDelete, lastDeleted } = useTasksContext();
+  const { loading, error, metrics, derivedSorted, addTask, updateTask, deleteTask, undoDelete, lastDeleted, clearLastDeleted } = useTasksContext();
   const handleCloseUndo = useCallback(() => {
-    // Intentionally empty
-    // Closing snackbar should NOT undo delete
-  }, []);
+    clearLastDeleted(); // reset deleted state
+  }, [clearLastDeleted]);
   const [q, setQ] = useState('');
   const [fStatus, setFStatus] = useState<string>('All');
   const [fPriority, setFPriority] = useState<string>('All');
